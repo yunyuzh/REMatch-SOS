@@ -18,7 +18,6 @@ def load_soap(directory):
     variance = np.var(features)
     n_features = features.shape[1]
     gamma = 1 / (n_features * variance)
-    print(len(features_list))
     return features_list, indices, gamma
 
 def breakdown(features_list, num_groups):
@@ -55,11 +54,9 @@ def update_distance_matrix(matrix):
     for i in range(9):
         group_start_index = i * 1000
         group_end_index = group_start_index + 1000
-        print("group " + str(i))
 
         for j in range(1000):
             current_index = group_start_index + j
-            print(current_index)
 
             chain = []
 
@@ -86,7 +83,6 @@ def update_distance_matrix(matrix):
                         m_structure_index = chain[m]
                         matrix[m_structure_index, next_structure_group_start:next_structure_group_end] = matrix[current_structure_index, next_structure_group_start:next_structure_group_end]
                         matrix[next_structure_group_start:next_structure_group_end, m_structure_index] = matrix[next_structure_group_start:next_structure_group_end, current_structure_index]
-            print(str(current_index) + " done")
 
     return matrix
 
