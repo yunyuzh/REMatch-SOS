@@ -90,6 +90,13 @@ def update_distance_matrix(matrix):
 
     return matrix
 
-def rematch(gamma):
+def process_rematch(file_base_path, output_path):
+    features, indices, gamma = load_soap(file_base_path)
+    groups = breakdown(features, 10)
+    matrix = np.zeros((10000,10000))
     re = REMatchKernel(metric="rbf", gamma=gamma, alpha=1, threshold=1e-6)
-    return re
+    matrix = rematch_for_same_group(groups, matrix, re)
+    matrix = rematch_for_cross_groups(groups, matrix, re)
+    distance_matrix = get_distance_matrix(matrix)
+    distance_matrix = update_distance_matrix(distance_matrix)
+    np.save(output_path, distance_matrix)
