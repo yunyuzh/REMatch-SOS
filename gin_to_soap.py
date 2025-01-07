@@ -39,3 +39,7 @@ def generate_soap_descriptor(atoms, csv_file):
 
     soap_descriptors = soap.create(atoms, centers=target_indices)
     np.savetxt(csv_file, soap_descriptors, delimiter=',') 
+
+def process_gin(gin_path, output_path):
+    atoms = parse_gin_to_atoms(gin_path)
+    generate_soap_descriptor(atoms, output_path)
