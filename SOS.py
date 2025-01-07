@@ -1,4 +1,3 @@
-import os
 import numpy as np
 import pandas as pd
 
@@ -55,3 +54,11 @@ def get_perplexity(D, beta):
     sumA = np.sum(A)
     H = np.log(sumA) + beta * np.sum(D * A) / sumA
     return H, A
+
+def process_sos(file_base_path, output_path):
+    D = load_distance_matrix(file_base_path)
+    A = d2a(D)
+    B = a2b(A)
+    O = b2o(B)
+    df_O = pd.DataFrame(O, columns=["Outlier_Score"])
+    df_O.to_csv(output_path, index=False)
