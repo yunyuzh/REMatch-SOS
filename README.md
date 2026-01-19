@@ -104,5 +104,6 @@ In practice, this is controlled by a **threshold / percentile window** on the SO
 Kernel similarity is pairwise and scales quickly with dataset size.
 For large pools, use batching / approximation strategies (see the later *Scaling tips* section).
 
+![Workflow](workflow.jpg)
 
 
