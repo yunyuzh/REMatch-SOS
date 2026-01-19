@@ -70,6 +70,8 @@ Before running on very large datasets, do a small pilot (e.g., 500–2000 struct
 
 REMatch/SOS is a **two-stage screening layer** designed to sit *after* a fast energy sanity-check (optional but recommended).
 
+![Workflow](workflow.jpg)
+
 ### Workflow at a glance
 
 1) **(Recommended) Prefilter by energy / validity**
@@ -104,6 +106,6 @@ In practice, this is controlled by a **threshold / percentile window** on the SO
 Kernel similarity is pairwise and scales quickly with dataset size.
 For large pools, use batching / approximation strategies (see the later *Scaling tips* section).
 
-![Workflow](workflow.jpg)
+
 
 
