@@ -66,4 +66,43 @@ Before running on very large datasets, do a small pilot (e.g., 500–2000 struct
 - SOS threshold range vs. subset size,
 - (if energies are available) whether the selected subset preserves low-energy regions and the overall distribution.
 
+## Method overview
+
+REMatch/SOS is a **two-stage screening layer** designed to sit *after* a fast energy sanity-check (optional but recommended).
+
+### Workflow at a glance
+
+1) **(Recommended) Prefilter by energy / validity**
+- Use **MACE** (or any fast surrogate / simple rules) to remove *unphysical* or *extremely high-energy* structures.
+- Output: a “clean pool” of plausible candidates.
+
+2) **Represent structures (descriptor)**
+- Compute a per-structure representation (default: **SOAP**).
+- This is the only “view” the method has of your data, so descriptor choice matters.
+
+3) **Measure similarity (kernel)**
+- Compute pairwise structural similarities using the **REMatch kernel** (or other kernels).
+- Output: a similarity matrix `K` (or a distance matrix `D` derived from `K`).
+
+4) **Score & select (SOS)**
+- Run **Stochastic Outlier Selection (SOS)** on the distance space to assign each structure an **outlier probability**.
+- Keep **informative boundary structures** (neither dense duplicates nor extreme outliers) to form a representative subset.
+
+### Why “boundary” structures?
+Intuitively, you want to:
+- **discard dense duplicates** (very similar to many neighbors → redundant),
+- **avoid extreme outliers** (often pathological / irrelevant unless you explicitly want them),
+- **keep the boundary** where structures are diverse but still representative of the plausible landscape.
+
+In practice, this is controlled by a **threshold / percentile window** on the SOS outlier probability.
+
+### What you get
+- `selected_indices` (and optionally `selected.xyz`)
+- per-structure diagnostics (e.g., SOS outlier probabilities), which make the selection **auditable and explainable**
+
+### Computational note
+Kernel similarity is pairwise and scales quickly with dataset size.
+For large pools, use batching / approximation strategies (see the later *Scaling tips* section).
+
+
 
