@@ -1,5 +1,8 @@
 # REMatch-SOS
 
+Machine Learning Accelerated Structure Prediction for Supported Metal Nanoclusters
+10.1103/PhysRevMaterials.9.033801
+
 ## About REMatch/SOS
 
 **REMatch + SOS** is an **unsupervised, structure-first screening** method for large pools of candidate atomic structures.
@@ -39,5 +42,4 @@ Selections can be explained directly in terms of structure:
 
 
 
-Machine Learning Accelerated Structure Prediction for Supported Metal Nanoclusters
-10.1103/PhysRevMaterials.9.033801
+
