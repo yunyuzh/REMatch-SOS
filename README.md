@@ -19,7 +19,7 @@ Given a large set of initial configurations, REMatch/SOS:
 In our published testbed, this reduces **10,000 initial configurations per case to ~30% (~3,000)** for full relaxation while
 retaining the key low-energy landscape.
 
-### How it differs from supervised ML potentials (e.g., MACE)
+### How it differs from supervised ML potentials
 Supervised interatomic potentials (e.g., **MACE**) are trained to predict **energies/forces** from labeled data, making them ideal
 for:
 - quickly removing **unphysical / extremely high-energy** structures,
@@ -28,12 +28,6 @@ for:
 **REMatch/SOS is complementary**: it does **not** require E/F labels and does not attempt to predict energies.
 Its goal is **redundancy reduction and coverage**: after you remove pathological structures (with MACE or any fast surrogate),
 REMatch/SOS helps you keep structures that are **structurally distinct** so you spend compute on **new information**, not repeats.
-
-### Why it is interpretable (structure-first)
-Selections can be explained directly in terms of structure:
-- each structure has an **outlier probability** (SOS),
-- retained points are **boundary / informative configurations** in the similarity space,
-- you can trace *why* a structure is kept or discarded via its similarities to neighbors (kernel distances) and its SOS score.
 
 ### Typical use cases
 - Pre-screening before expensive relaxations (DFT / high-level methods)
