@@ -36,33 +36,34 @@ REMatch/SOS helps you keep structures that are **structurally distinct** so you 
 
 ## Assumptions & scope
 
-REMatch/SOS is **unsupervised** and **structure-first**: it assumes that *structural similarity* (as defined by your descriptor + kernel)
-is a meaningful proxy for redundancy / diversity in your dataset.
+REMatch/SOS is **unsupervised** and **structure-first**: it removes redundancy by measuring *structural similarity*
+(descriptor + kernel), not by learning energies/forces.
 
-### Core assumptions
-- **Comparable structures**: all inputs represent the *same “kind” of object* (e.g., same chemical system / composition and a consistent definition of the structure).
+### Energy-landscape assumptions (paper-motivated)
+This workflow is motivated by three common (system-dependent) assumptions about the energy landscape:
+1. **Similar initial structures tend to relax to similar local minima.**
+2. **Global minima are typically surrounded by structurally (and often energetically) similar local minima.**
+3. **As system size increases, the proportion of distinct low-energy structures decreases.**
+
+### Practical requirements
+- **Comparable inputs**: structures should represent the same “type of object” (same chemistry / consistent definition).
   If you mix qualitatively different systems, **split into groups** and run selection per group.
-- **Descriptor fidelity**: the chosen descriptor (e.g., SOAP) captures the structural features you care about (local coordination, bonding motifs, etc.).
-- **Redundancy exists**: the pool contains many near-duplicates; selection is beneficial only when redundancy is non-trivial.
-- **Goal is coverage, not direct ranking**: the method prioritizes **representative diversity**. It does not “learn” energies/forces and is not a replacement for a potential.
+- **Descriptor fidelity**: your descriptor (e.g., SOAP) must capture the structural differences you care about.
+- **Redundancy exists**: the method is most useful when the pool contains many near-duplicates.
+- **Prefilter recommended**: remove unphysical / extremely high-energy structures first (e.g., via MACE or simple heuristics).
 
 ### Recommended scope (works best when)
-- You have **large candidate pools** from MC/GA/random searches and need to remove near-duplicates before expensive relaxation/DFT.
-- You are curating a **diverse subset** for downstream tasks (DFT labeling, ML training, active learning).
-- Your dominant variability is **geometric / structural** (rather than, e.g., electronic state changes not encoded in the descriptor).
+- Large candidate pools from MC/GA/random searches where you want a **diverse subset** before expensive relaxation/DFT.
+- Dataset curation / active learning where you want **coverage**, not only “top-ranked by energy”.
 
 ### Limitations / when to be careful
-- If your descriptor misses the “physics that matters” for your problem, selection may not preserve what you care about.
-- **Pathological / extremely high-energy structures** can distort similarity space.  
-  **Tip:** prefilter with a fast surrogate potential (e.g., MACE) or simple heuristics before running REMatch/SOS.
-- Kernel-based methods can be heavy at scale (pairwise similarities grow quickly with dataset size); consider approximation / batching strategies for large runs.
+- If key physics is not represented in the descriptor/kernel, “diversity” in similarity space may not match what you need.
+- Kernel-based similarity can be heavy at scale (pairwise growth); use batching/approximation strategies for large runs.
 
-### ⚠️ Please validate before large-scale use
-For a *new system*, do a small pilot study first (e.g., a few hundred to a few thousand structures) to check that:
-- your chosen descriptor/kernel settings produce sensible neighborhoods,
-- your SOS thresholds yield the desired subset size,
-- (if energies are available) the selected subset still captures low-energy regions and preserves the overall distribution.
-
-A simple threshold sensitivity scan is often enough to calibrate robust defaults for your dataset.
+### ⚠️ Validate before large-scale runs
+Before running on very large datasets, do a small pilot (e.g., 500–2000 structures) to calibrate:
+- descriptor/kernel settings (do neighborhoods look sensible?),
+- SOS threshold range vs. subset size,
+- (if energies are available) whether the selected subset preserves low-energy regions and the overall distribution.
 
 
