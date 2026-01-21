@@ -10,7 +10,7 @@ def parse_gin_to_atoms(gin_path):
     positions = []
     for line in lines:
         parts = line.strip().split()
-        if len(parts) == 11 and parts[0] != 'H' and parts[0] != 'He':
+        if len(parts) == 11 and parts[0] != 'H' and parts[0] != 'He': # ignore these lines when parsing *.gin
             element = parts[0]
             x, y, z = float(parts[2]), float(parts[3]), float(parts[4])
             symbols.append(element)
@@ -20,13 +20,13 @@ def parse_gin_to_atoms(gin_path):
     return atoms
 
 def generate_soap_descriptor(atoms, csv_file):
-    target_elements = ['Cu']
+    target_elements = ['Cu'] # SOAP centers: only compute on these atoms
     target_indices = [atom.index for atom in atoms if atom.symbol in target_elements]
 
-    species = ["Cu", "Zn", "O"]
-    r_cut = 10.0
-    n_max = 2
-    l_max = 2
+    species = ["Cu", "Zn", "O"] # all species that may appear in the structure
+    r_cut = 10.0 # A cutoff for local region in angstroms
+    n_max = 2 # The number of radial basis functions
+    l_max = 2 # The maximum degree of spherical harmonics
 
     soap = SOAP(
         species=species,
@@ -39,7 +39,3 @@ def generate_soap_descriptor(atoms, csv_file):
 
     soap_descriptors = soap.create(atoms, centers=target_indices)
     np.savetxt(csv_file, soap_descriptors, delimiter=',') 
-
-def process_gin(gin_path, output_path):
-    atoms = parse_gin_to_atoms(gin_path)
-    generate_soap_descriptor(atoms, output_path)
