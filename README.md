@@ -106,6 +106,22 @@ In practice, this is controlled by a **threshold / percentile window** on the SO
 Kernel similarity is pairwise and scales quickly with dataset size.
 For large pools, use batching / approximation strategies (see the later *Scaling tips* section).
 
+## Methodology: SOAP (structure representation)
+
+**SOAP (Smooth Overlap of Atomic Positions)** is a local-atomic-environment descriptor: it converts each structure (or selected atomic centers)
+into numerical vectors so we can measure *structural similarity* consistently across a large dataset.
+
+In this repo, SOAP is used as the **structure-first representation** before computing REMatch similarities and running SOS selection.
+
+### SOAP utilities in this repo
+
+We provide a small, intentionally simple script with two functions:
+
+- `parse_gin_to_atoms(gin_path)`  
+  Parse a `*.gin` file into an `ase.Atoms` object.
+
+- `generate_soap_descriptor(atoms, csv_file)`  
+  Compute SOAP descriptors on **target centers** using DScribe, then save to `csv_file`.
 
 
 
