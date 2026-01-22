@@ -181,11 +181,7 @@ This is the **exact approximation strategy used in the paper**: compute REMatch 
 
 ### Greedy representative approximation: prototypes + block-constant matrix (`greedy_algo.py`)
 
-This approximation first selects a small set of **representative structures** (prototypes) using a greedy diversity criterion, assigns each structure to its closest representative, and then approximates the full similarity matrix as **block-constant** in representative space:
-\[
-S_{ij} \approx S^{(\mathrm{rep})}_{c(i),\,c(j)}.
-\]
-This reduces REMatch evaluations to roughly “representatives vs all structures” + “representatives vs representatives”, at the cost of a coarser similarity landscape. 
+This approximation first selects a small set of **representative structures** (prototypes) using a greedy diversity criterion, assigns each structure to its closest representative, and then approximates the full similarity matrix as **block-constant** in representative space. This reduces REMatch evaluations to roughly “representatives vs all structures” + “representatives vs representatives”, at the cost of a coarser similarity landscape. 
 
 **High-level steps**
 1. Load SOAP and estimate `gamma` the same way as the other scripts. :contentReference[oaicite:8]{index=8}  
