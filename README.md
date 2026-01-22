@@ -246,6 +246,7 @@ BibTeX (APS):
   doi = {10.1103/PhysRevMaterials.9.033801},
   url = {https://link.aps.org/doi/10.1103/PhysRevMaterials.9.033801}
 }
+```
 
 ## Contact
 
