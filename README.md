@@ -123,5 +123,30 @@ We provide a small, intentionally simple script with two functions:
 - `generate_soap_descriptor(atoms, csv_file)`  
   Compute SOAP descriptors on **target centers** using DScribe, then save to `csv_file`.
 
+## Methodology: REMatch kernel (structure–structure similarity)
 
+**REMatch** is a global-structure kernel that compares two structures by *optimally matching their local environments* (here: SOAP vectors) and returning a single similarity score.
+
+### Full kernel computation (`rematch_full.py`)
+
+This repo provides `rematch_full.py`, a **non-approximate** implementation that computes the **full** REMatch similarity matrix `K (N×N)` and converts it to a distance-like matrix `D` for downstream SOS.
+
+What it does (end-to-end):
+1. **Load SOAP** from `A{i}.csv` in a directory (each file = one structure; rows = centers, cols = SOAP features).
+2. **Normalize SOAP** vectors (row-wise) to make the RBF metric better behaved.
+3. Estimate an RBF scale `gamma` from the variance of all stacked SOAP features:
+   - `gamma = 1 / (n_features * variance)`
+4. Compute the full REMatch similarity matrix:
+   - `K_ij = REMatch(struct_i, struct_j)`
+5. Convert similarity to distance for SOS:
+   - `D = clip(1 - K, 0, +inf)` with `D_ii = 0`
+6. Save `D` as a NumPy file (e.g., `distance_full.npy`).
+
+Key functions (readable “3-function” layout):
+- `load_soap(directory)`  
+  Loads and normalizes `A{i}.csv`, returns `(features_list, indices, gamma)`.
+- `get_distance_matrix(K)`  
+  Converts `K` → `D` via `D = 1 - K`.
+- `process_rematch(soap_dir, output_path)`  
+  Runs the full pipeline and saves `distance_full.npy`.
 
