@@ -150,3 +150,55 @@ Key functions (readable “3-function” layout):
 - `process_rematch(soap_dir, output_path)`  
   Runs the full pipeline and saves `distance_full.npy`.
 
+## Approximate REMatch for large datasets
+
+Computing the full REMatch kernel scales poorly because it requires (conceptually) **all-pairs** structure–structure comparisons. This repo provides two approximation options that reduce the number of REMatch evaluations while still producing an **NxN distance matrix** for downstream SOS.
+
+> Both approximations still *materialize* an NxN distance matrix in memory (`.npy`). They primarily reduce **kernel-evaluation cost**, not the final matrix size.
+
+---
+
+### Paper approximation: block computation + iterative propagation (`approximation.py`)
+
+This is the **exact approximation strategy used in the paper**: compute REMatch only **within groups** and **between adjacent groups**, then iteratively propagate similarity/distance information to fill the remaining (uncomputed) blocks. 
+
+**High-level steps**
+1. Split the dataset into `num_groups` (hard-coded example: 10 groups × 1000 structures).   
+2. Compute REMatch blocks:
+   - intra-group (`rematch_for_same_group`)
+   - adjacent inter-group (`rematch_for_cross_groups`) 
+3. Convert similarity to distance: `D = 1 - S`. 
+4. Iteratively fill missing entries by propagating distances along a “most-similar chain” across groups (`update_distance_matrix`). 
+5. Save the approximate distance matrix for SOS. :contentReference[oaicite:5]{index=5}
+
+**Key functions**
+- `breakdown(features_list, num_groups)`
+- `rematch_for_same_group(...)`, `rematch_for_cross_groups(...)`
+- `update_distance_matrix(D)` (iterative propagation / completion)
+- `process_rematch(soap_dir, output_path)` end-to-end runner 
+
+---
+
+### Greedy representative approximation: prototypes + block-constant matrix (`greedy_algo.py`)
+
+This approximation first selects a small set of **representative structures** (prototypes) using a greedy diversity criterion, assigns each structure to its closest representative, and then approximates the full similarity matrix as **block-constant** in representative space:
+\[
+S_{ij} \approx S^{(\mathrm{rep})}_{c(i),\,c(j)}.
+\]
+This reduces REMatch evaluations to roughly “representatives vs all structures” + “representatives vs representatives”, at the cost of a coarser similarity landscape. 
+
+**High-level steps**
+1. Load SOAP and estimate `gamma` the same way as the other scripts. :contentReference[oaicite:8]{index=8}  
+2. Build REMatch kernel with RBF metric. 
+3. Greedily pick `n_representatives` (default example: 100). 
+4. Assign each structure to its most similar representative (`assign_clusters`). 
+5. Build representative similarity matrix and “inflate” to full NxN via cluster IDs (`build_full_similarity_matrix`). 
+6. Convert to distance and save (also saves representatives + cluster assignments). 
+
+**Key functions**
+- `select_representatives(features_list, n_reps, re_kernel)` (greedy diversity selection) 
+- `assign_clusters(sims_with_reps)` (nearest prototype assignment) 
+- `build_full_similarity_matrix(rep_sim_matrix, cluster_ids)` (block-constant approximation) 
+- `process_greedy_rematch(soap_dir, output_dir)` end-to-end runner 
+
+
