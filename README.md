@@ -227,3 +227,29 @@ Key functions:
 - `SOS.py` outputs **outlier probabilities**; the *selection* step (e.g., keeping “boundary” points) is done by thresholding these scores.
 - In our paper we typically discard dense-cluster centers (low outlier prob.) and super-outliers (very high outlier prob.), and retain **boundary** configurations in a mid-range (e.g., ~55–75% as a practical default), but thresholds are dataset-dependent and should be validated on a pilot set. 
 
+## Reference
+
+If you use this code in academic work, please cite:
+
+- **Y. Zhang**, K. T. Butler, M. D. Higham, and C. R. A. Catlow, *REMatch plus SOS: Machine-learning-accelerated structure prediction for supported metal nanoclusters*, **Phys. Rev. Mater.** **9**, 033801 (2025). DOI: **10.1103/PhysRevMaterials.9.033801**
+
+BibTeX (APS):
+```bibtex
+@article{PhysRevMaterials.9.033801,
+  title = {REMatch plus SOS: Machine-learning-accelerated structure prediction for supported metal nanoclusters},
+  author = {Zhang, Yunyu and Butler, Keith T. and Higham, Michael D. and Catlow, C. Richard A.},
+  journal = {Phys. Rev. Mater.},
+  volume = {9},
+  issue = {3},
+  pages = {033801},
+  numpages = {15},
+  year = {2025},
+  month = {Mar},
+  publisher = {American Physical Society},
+  doi = {10.1103/PhysRevMaterials.9.033801},
+  url = {https://link.aps.org/doi/10.1103/PhysRevMaterials.9.033801}
+}
+
+## Contact
+
+If you have any questions, please contact us at <yunyu.zhang.23@ucl.ac.uk>.
