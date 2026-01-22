@@ -199,7 +199,7 @@ This approximation first selects a small set of **representative structures** (p
 
 ## Methodology: SOS (outlier probability)
 
-**SOS (Stochastic Outlier Selection)** is an unsupervised algorithm that assigns each structure an *outlier probability* from the REMatch-derived distance matrix: high values indicate structures that are weakly “connected” to the rest of the dataset. :contentReference[oaicite:0]{index=0}
+**SOS (Stochastic Outlier Selection)** is an unsupervised algorithm that assigns each structure an *outlier probability* from the REMatch-derived distance matrix: high values indicate structures that are weakly “connected” to the rest of the dataset.
 
 ### Implementation (`SOS.py`)
 
