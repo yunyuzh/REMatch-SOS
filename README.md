@@ -197,4 +197,33 @@ This approximation first selects a small set of **representative structures** (p
 - `build_full_similarity_matrix(rep_sim_matrix, cluster_ids)` (block-constant approximation) 
 - `process_greedy_rematch(soap_dir, output_dir)` end-to-end runner 
 
+## Methodology: SOS (outlier probability)
+
+**SOS (Stochastic Outlier Selection)** is an unsupervised algorithm that assigns each structure an *outlier probability* from the REMatch-derived distance matrix: high values indicate structures that are weakly “connected” to the rest of the dataset. :contentReference[oaicite:0]{index=0}
+
+### Implementation (`SOS.py`)
+
+`SOS.py` implements the standard SOS pipeline: **distance → affinity → binding probability → outlier probability**. 
+
+Key functions:
+- `load_distance_matrix(file_path)`  
+  Loads the distance matrix `D` from a `.npy` file. :contentReference[oaicite:2]{index=2}
+
+- `d2a(D, perplexity=30, eps=1e-5)`  
+  Converts distances `D` to an affinity matrix `A` using a Gaussian-like kernel with a **per-point bandwidth** (`beta`) tuned by binary search so each row matches the target **perplexity** (i.e., an effective neighbour count).   
+  Internally calls:
+  - `get_perplexity(D, beta)` to compute affinities `A = exp(-D * beta)` and the corresponding entropy `H`. :contentReference[oaicite:4]{index=4}
+
+- `a2b(A)`  
+  Row-normalizes affinities to a binding-probability matrix `B` (each row sums to 1). 
+
+- `b2o(B)`  
+  Computes the SOS outlier probability vector `O`, where each entry reflects the joint probability that *others do not bind to that point* (implemented as a product over `1 - B`). 
+
+- `process_sos(file_base_path, output_path)`  
+  End-to-end helper: `D → A → B → O`, then writes a CSV with column `Outlier_Score`. :contentReference[oaicite:7]{index=7}
+
+**How to use the scores**
+- `SOS.py` outputs **outlier probabilities**; the *selection* step (e.g., keeping “boundary” points) is done by thresholding these scores.
+- In our paper we typically discard dense-cluster centers (low outlier prob.) and super-outliers (very high outlier prob.), and retain **boundary** configurations in a mid-range (e.g., ~55–75% as a practical default), but thresholds are dataset-dependent and should be validated on a pilot set. 
 
