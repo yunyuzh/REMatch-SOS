@@ -1,5 +1,9 @@
 # REMatch-SOS
 
+## Update July 8, 2026
+
+gin_to_soap.py, greedy_algo.py, and SOS.py have now been rewritten to be more user-friendly as a workflow.
+
 ## About REMatch/SOS
 
 **REMatch + SOS** is an **unsupervised, structure-first screening** method for large pools of candidate atomic structures.
