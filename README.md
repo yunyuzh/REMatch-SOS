@@ -122,13 +122,8 @@ In this repo, SOAP is used as the **structure-first representation** before comp
 
 ### SOAP utilities in this repo
 
-We provide a small, intentionally simple script with two functions:
-
-- `parse_gin_to_atoms(gin_path)`  
-  Parse a `*.gin` file into an `ase.Atoms` object.
-
-- `generate_soap_descriptor(atoms, csv_file)`  
-  Compute SOAP descriptors on **target centers** using DScribe, then save to `csv_file`.
+- gin_to_soap.py
+- xyz_to_soap.py
 
 ## Methodology: REMatch kernel (structure–structure similarity)
 
@@ -148,14 +143,6 @@ What it does (end-to-end):
 5. Convert similarity to distance for SOS:
    - `D = clip(1 - K, 0, +inf)` with `D_ii = 0`
 6. Save `D` as a NumPy file (e.g., `distance_full.npy`).
-
-Key functions (readable “3-function” layout):
-- `load_soap(directory)`  
-  Loads and normalizes `A{i}.csv`, returns `(features_list, indices, gamma)`.
-- `get_distance_matrix(K)`  
-  Converts `K` → `D` via `D = 1 - K`.
-- `process_rematch(soap_dir, output_path)`  
-  Runs the full pipeline and saves `distance_full.npy`.
 
 ## Approximate REMatch for large datasets
 
@@ -186,7 +173,7 @@ This is the **exact approximation strategy used in the paper**: compute REMatch 
 
 ---
 
-### Greedy representative approximation: prototypes + block-constant matrix (`greedy_algo.py`)
+### Greedy representative approximation: prototypes + block-constant matrix (`greedy_algo.py`) (Recommended)
 
 This approximation first selects a small set of **representative structures** (prototypes) using a greedy diversity criterion, assigns each structure to its closest representative, and then approximates the full similarity matrix as **block-constant** in representative space. This reduces REMatch evaluations to roughly “representatives vs all structures” + “representatives vs representatives”, at the cost of a coarser similarity landscape. 
 
@@ -197,12 +184,6 @@ This approximation first selects a small set of **representative structures** (p
 4. Assign each structure to its most similar representative (`assign_clusters`). 
 5. Build representative similarity matrix and “inflate” to full NxN via cluster IDs (`build_full_similarity_matrix`). 
 6. Convert to distance and save (also saves representatives + cluster assignments). 
-
-**Key functions**
-- `select_representatives(features_list, n_reps, re_kernel)` (greedy diversity selection) 
-- `assign_clusters(sims_with_reps)` (nearest prototype assignment) 
-- `build_full_similarity_matrix(rep_sim_matrix, cluster_ids)` (block-constant approximation) 
-- `process_greedy_rematch(soap_dir, output_dir)` end-to-end runner 
 
 ## Methodology: SOS (outlier probability)
 
