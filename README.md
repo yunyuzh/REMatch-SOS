@@ -1,6 +1,12 @@
 # REMatch-SOS
 
-## Update July 8, 2026
+## Updates
+
+### June 12, 2026
+
+xyz_to_soap.py
+
+### June 8, 2026
 
 gin_to_soap.py, greedy_algo.py, and SOS.py have now been rewritten to be more user-friendly as a workflow.
 
